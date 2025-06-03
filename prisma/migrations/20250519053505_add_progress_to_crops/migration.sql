@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Crop" ADD COLUMN     "progress" INTEGER NOT NULL DEFAULT 0;

@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(cuid())
+  name      String?
+  email     String      @unique
+  password  String
+  role      Role        @default(USER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  crops     Crop[]
+  inventory Inventory[]
+  livestock Livestock[]
+}
+
+model Crop {
+  id              String     @id @default(cuid())
+  name            String
+  variety         String?
+  area            Float
+  plantingDate    DateTime
+  expectedHarvest DateTime
+  status          CropStatus @default(GROWING)
+  notes           String?
+  userId          String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id])
+}
+
+model Livestock {
+  id        String          @id @default(cuid())
+  type      String
+  breed     String
+  quantity  Int
+  status    LivestockStatus @default(HEALTHY)
+  birthDate DateTime?
+  notes     String?
+  userId    String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  user      User            @relation(fields: [userId], references: [id])
+}
+
+model Inventory {
+  id          String            @id @default(cuid())
+  name        String
+  category    InventoryCategory
+  quantity    Float
+  unit        String
+  minQuantity Float?
+  location    String?
+  notes       String?
+  userId      String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  user        User              @relation(fields: [userId], references: [id])
+}
+
+model WeatherData {
+  id          String   @id @default(cuid())
+  timestamp   DateTime @default(now())
+  temperature Float
+  humidity    Float
+  windSpeed   Float
+  windDir     String
+  description String
+  icon        String
+  location    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WeatherAlert {
+  id        String   @id @default(cuid())
+  type      String
+  severity  String
+  message   String
+  startTime DateTime
+  endTime   DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CropStatus {
+  PLANNED
+  PLANTED
+  GROWING
+  HARVESTED
+  FAILED
+}
+
+enum LivestockStatus {
+  HEALTHY
+  SICK
+  QUARANTINED
+  PREGNANT
+  NURSING
+}
+
+enum InventoryCategory {
+  FEED
+  SEED
+  FERTILIZER
+  EQUIPMENT
+  MEDICINE
+  PRODUCE
+  OTHER
+}
