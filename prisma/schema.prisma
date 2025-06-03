@@ -110,6 +110,7 @@ enum LivestockStatus {
   QUARANTINED
   PREGNANT
   NURSING
+  RECOVERING
 }
 
 enum InventoryCategory {

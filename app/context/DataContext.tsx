@@ -26,7 +26,7 @@ interface Inventory {
 interface Livestock {
   type: string;
   count: number;
-  status: 'HEALTHY' | 'SICK' | 'QUARANTINED' | 'PREGNANT' | 'NURSING';
+  status: 'HEALTHY' | 'SICK' | 'QUARANTINED' | 'PREGNANT' | 'NURSING' | 'RECOVERING';
   lastCheckup: string;
 }
 

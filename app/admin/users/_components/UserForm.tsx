@@ -1,5 +1,7 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm as useHookForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -45,7 +47,7 @@ interface UserFormProps {
 
 export function UserForm({ initialData }: UserFormProps) {
   const router = useRouter();
-  const form = useForm<UserFormValues>({
+  const form = useHookForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       name: initialData?.name || '',

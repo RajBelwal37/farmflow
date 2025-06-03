@@ -13,7 +13,7 @@ import { Plus, Pencil, Trash2, X } from 'lucide-react'
 type LivestockFormData = {
   type: string;
   count: number;
-  status: 'HEALTHY' | 'SICK' | 'RECOVERING';
+  status: 'HEALTHY' | 'SICK' | 'QUARANTINED' | 'PREGNANT' | 'NURSING' | 'RECOVERING';
   lastCheckup: string;
 }
 
@@ -64,6 +64,9 @@ export default function LivestockPage() {
       case 'HEALTHY': return 'bg-green-500'
       case 'SICK': return 'bg-red-500'
       case 'RECOVERING': return 'bg-amber-500'
+      case 'QUARANTINED': return 'bg-orange-500'
+      case 'PREGNANT': return 'bg-purple-500'
+      case 'NURSING': return 'bg-blue-500'
       default: return 'bg-gray-500'
     }
   }
@@ -110,7 +113,7 @@ export default function LivestockPage() {
               <Label htmlFor="status">Health Status</Label>
               <Select
                 value={newLivestock.status}
-                onValueChange={(value: 'HEALTHY' | 'SICK' | 'RECOVERING') => 
+                onValueChange={(value: 'HEALTHY' | 'SICK' | 'QUARANTINED' | 'PREGNANT' | 'NURSING' | 'RECOVERING') => 
                   setNewLivestock({ ...newLivestock, status: value })}
               >
                 <SelectTrigger>
@@ -119,6 +122,9 @@ export default function LivestockPage() {
                 <SelectContent>
                   <SelectItem value="HEALTHY">Healthy</SelectItem>
                   <SelectItem value="SICK">Sick</SelectItem>
+                  <SelectItem value="QUARANTINED">Quarantined</SelectItem>
+                  <SelectItem value="PREGNANT">Pregnant</SelectItem>
+                  <SelectItem value="NURSING">Nursing</SelectItem>
                   <SelectItem value="RECOVERING">Recovering</SelectItem>
                 </SelectContent>
               </Select>
