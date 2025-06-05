@@ -93,7 +93,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchAlerts();
-  }, []);
+  }, [fetchAlerts]);
 
   const handleCreateAlert = async (alertData: {
     type: string;

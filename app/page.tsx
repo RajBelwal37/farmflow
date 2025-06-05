@@ -187,7 +187,7 @@ export default function Home() {
               Sustainable Farming Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Make data-driven decisions to optimize your farm's performance while maintaining environmental responsibility.
+              Make data-driven decisions to optimize your farm&apos;s performance while maintaining environmental responsibility.
             </p>
           </motion.div>
 

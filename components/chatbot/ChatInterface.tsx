@@ -36,7 +36,7 @@ export function ChatInterface() {
         });
       }
     }
-  }, []);
+  }, [toast]);
 
   // Save messages to localStorage whenever they change
   useEffect(() => {

@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { LocationSelector } from '@/components/weather/location-selector';
+import Image from 'next/image';
 
 interface WeatherData {
   temperature: number;
@@ -98,10 +99,11 @@ export default function WeatherDashboard() {
             <div>
               <h2 className="text-xl font-semibold mb-2">Current Conditions</h2>
               <div className="flex items-center">
-                <img
+                <Image
                   src={`https://openweathermap.org/img/wn/${currentWeather.icon}@2x.png`}
                   alt={currentWeather.description}
-                  className="w-16 h-16"
+                  width={64}
+                  height={64}
                 />
                 <div>
                   <div className="text-3xl">{currentWeather.temperature}°C</div>
@@ -145,10 +147,12 @@ export default function WeatherDashboard() {
                 <div className="font-medium">
                   {new Date(day.timestamp).toLocaleDateString('en-US', { weekday: 'short' })}
                 </div>
-                <img
+                <Image
                   src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
                   alt={day.description}
-                  className="w-16 h-16 mx-auto"
+                  width={64}
+                  height={64}
+                  className="mx-auto"
                 />
                 <div className="text-2xl">{day.temperature}°C</div>
                 <div className="text-sm text-gray-600 capitalize">{day.description}</div>
