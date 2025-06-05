@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { signIn } from 'aws-amplify/auth';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,19 +34,23 @@ export default function SignIn() {
 
   const onSubmit = async (data: SignInForm) => {
     try {
-      const result = await signIn("credentials", {
-        email: data.email,
+      const { isSignedIn, nextStep } = await signIn({
+        username: data.email,
         password: data.password,
-        redirect: false,
       });
 
-      if (result?.error) {
-        setError("Invalid email or password");
-      } else {
+      if (isSignedIn) {
         router.replace("/dashboard");
+      } else if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_EMAIL_CODE') {
+        // Handle email verification code
+        router.push("/auth/confirm-signin");
       }
     } catch (error) {
-      setError("An error occurred during sign in");
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Invalid email or password"
+      );
     }
   };
 

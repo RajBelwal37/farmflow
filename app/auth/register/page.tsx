@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import bcrypt from "bcryptjs";
+import { signUp } from 'aws-amplify/auth';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function Register() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
 
   const {
     register,
@@ -41,26 +42,23 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const hashedPassword = await bcrypt.hash(data.password, 10);
-
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: hashedPassword,
-        }),
+      const { isSignUpComplete, nextStep } = await signUp({
+        username: data.email,
+        password: data.password,
+        options: {
+          userAttributes: {
+            name: data.name,
+            email: data.email,
+          },
+          autoSignIn: true
+        }
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+      if (isSignUpComplete) {
+        router.push("/auth/signin");
+      } else if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+        setIsVerificationSent(true);
       }
-
-      router.push("/auth/signin");
     } catch (error) {
       setError(
         error instanceof Error
@@ -69,6 +67,30 @@ export default function Register() {
       );
     }
   };
+
+  if (isVerificationSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <h1 className="text-2xl font-bold text-center text-foreground">
+              Verification Email Sent
+            </h1>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground">
+              Please check your email for a verification code to complete your registration.
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Link href="/auth/signin" className="text-primary hover:underline">
+              Go to Sign In
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
