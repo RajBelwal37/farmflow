@@ -15,6 +15,8 @@ import { CreateAlertDialog } from '@/components/alerts/create-alert-dialog';
 import { AlertService } from '@/lib/alert-service';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
+import { CreateTaskDialog } from '@/components/tasks/create-task-dialog';
+import { TaskList } from '@/components/tasks/task-list';
 
 interface DashboardData {
   revenue: {
@@ -64,6 +66,7 @@ export default function Dashboard() {
   const alertService = new AlertService();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [alertToDelete, setAlertToDelete] = useState<string | null>(null);
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -142,6 +145,34 @@ export default function Dashboard() {
       case 'medium': return 'bg-amber-500';
       case 'low': return 'bg-blue-500';
       default: return 'bg-gray-500';
+    }
+  };
+
+  const handleCreateTask = async (taskData: {
+    title: string;
+    type: string;
+    priority: string;
+    description: string;
+    dueDate: Date;
+    assignedTo?: string;
+  }) => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create task');
+      }
+
+      toast.success('Task created successfully');
+    } catch (error) {
+      console.error('Error creating task:', error);
+      toast.error('Failed to create task');
     }
   };
 
@@ -445,9 +476,18 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* Tasks Section */}
+      <div className="mb-8">
+        <TaskList />
+      </div>
+
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={() => setIsCreateTaskOpen(true)}
+        >
           <Calendar className="h-4 w-4" />
           Schedule Task
         </Button>
@@ -481,6 +521,12 @@ export default function Dashboard() {
         open={isCreateAlertOpen}
         onOpenChange={setIsCreateAlertOpen}
         onSubmit={handleCreateAlert}
+      />
+
+      <CreateTaskDialog
+        open={isCreateTaskOpen}
+        onOpenChange={setIsCreateTaskOpen}
+        onSubmit={handleCreateTask}
       />
     </div>
   );
